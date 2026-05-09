@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.claude/
+
+# BADA data - proprietary EUROCONTROL license, do not commit to public repos
+BADA_OR_3.6++(komma_test).xls
