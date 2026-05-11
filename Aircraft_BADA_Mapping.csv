@@ -1,0 +1,98 @@
+Aircraft Type;Category;Min Runway Length (ft);Min Runway Length (m);Min Runway Width (ft);Min Runway Width (m);ICAO Code (runway);Range (km);BADA ID
+Beechcraft 1900D;local_aircraft;3395;1035;;23;B;2100;B190
+Short 330;local_aircraft;3247;990;;23;B;1600;SH33
+Let L-410 Turbolet;local_aircraft;2657;810;;23;B;1200;L410
+CASA C-212 Aviocar;local_aircraft;2657;810;;23;B;1600;C212
+Dornier DO-228;local_aircraft;2066;630;;23;B;1000;D228
+DHC-6 Twin Otter;local_aircraft;1476;450;;23;B;1300;DHC6
+Cessna 208 Caravan;local_aircraft;1476;450;;23;B;1800;C208
+Boeing 727-200;regional;8858;2701;;30;C;4200;B722
+Boeing 727-100;regional;7972;2431;;30;C;4200;B721
+Embraer ERJ175;regional;6626;2020;;30;C;3300;E175
+McDonnell Douglas MD-90;regional;6495;1980;;30;C;3700;MD90
+McDonnell Douglas DC-9-40;regional;6200;1890;;30;C;2800;DC94
+McDonnell Douglas DC-9-10;regional;6200;1890;;30;C;2800;DC91
+Boeing 717;regional;6200;1890;;30;C;3700;B712
+Embraer ERJ190;regional;6071;1851;;30;C;4400;E190
+McDonnell Douglas MD-81;regional;6059;1847;;30;C;2800;MD81
+Bombardier CRJ1000;regional;5905;1800;;30;C;3000;CRJX
+Embraer ERJ145;regional;5905;1800;;23;B;2800;E145
+Tupolev Tu-334;regional;5787;1764;;30;C;3100;T334
+Boeing 737-200 Advanced;regional;5610;1710;;30;C;3700;B732
+Bombardier CS300;regional;5580;1701;;30;C;6100;BCS3
+Bombardier CRJ900;regional;5550;1692;;30;C;2800;CRJ9
+Sukhoi Superjet 100-95;regional;5462;1665;;30;C;4400;SU95
+Antonov An-148;regional;5315;1620;;30;C;4400;A148
+Fokker 100;regional;5019;1530;;30;C;3100;F100
+Mitsubishi MRJ70;regional;4788;1460;;30;C;3700;MRJ7
+Bombardier CRJ700;regional;4724;1440;;30;C;2500;CRJ7
+Bombardier CS100;regional;4455;1358;;30;C;6300;BCS1
+ATR 72;regional;4429;1350;;30;C;1500;AT72
+British Aerospace ATP;regional;3989;1216;;30;C;1800;ATP
+Saab 2000;regional;3839;1170;;30;C;2800;SB20
+Dash 8 Q400;regional;3839;1170;;30;C;2000;DH8D
+Fokker 70;regional;3839;1170;;30;C;2000;F70
+Dash 8 Q300;regional;3247;990;;30;C;1600;DH8C
+British Aerospace BAe-146;regional;3041;927;;30;C;3000;B462
+Concorde;medium_range;10030;3061;;45;D;7200;CONC
+McDonnell Douglas DC-8-63;medium_range;8858;2701;;45;D;7400;DC86
+McDonnell Douglas DC-10-10;medium_range;8858;2701;;45;D;6500;DC10
+Boeing 707-120B;medium_range;8563;2611;;45;D;6800;B701
+Boeing 767-300;medium_range;8563;2611;;45;D;11000;B763
+Airbus 300;medium_range;8415;2566;;45;D;7400;A30B
+Boeing 787-3;medium_range;8326;2538;;45;D;4600;B783
+Boeing 767-200;medium_range;7972;2431;;45;D;7200;B762
+Boeing 757-300;medium_range;7677;2341;;45;D;6200;B753
+Boeing 737-900ER;medium_range;6791;2070;;30;C;5900;B739
+Airbus 310;medium_range;6762;2061;;45;D;8000;A310
+Airbus 321;medium_range;6525;1989;;30;C;5900;A321
+Airbus 320;medium_range;6467;1971;;30;C;6100;A320
+Tupolev Tu-154;medium_range;6200;1890;;30;C;3900;T154
+Tupolev Tu-204;medium_range;6053;1845;;30;C;4300;T204
+Bombardier CS300ER;medium_range;5757;1755;;30;C;6100;BCS3
+Boeing 737-700;medium_range;5315;1620;;30;C;6300;B737
+Airbus 319;medium_range;5167;1575;;30;C;6900;A319
+Bombardier CS100ER;medium_range;5019;1530;;30;C;6300;BCS1
+Airbus 318;medium_range;4134;1260;;30;C;5700;A318
+Boeing 747-400;long_range;9743;2971;;45;D;13500;B744
+Boeing 747-400ER;long_range;9743;2971;;45;D;14200;B744
+Boeing 747-300;long_range;9743;2971;;45;D;12400;B743
+Boeing 747-400M;long_range;9743;2971;;45;D;13500;B744
+Boeing 747-200;long_range;9448;2881;;45;D;12100;B742
+Airbus 340-500;long_range;9448;2881;;45;D;16000;A345
+Boeing 747-800;long_range;9419;2871;;60;F;14300;B748
+Boeing 747-100;long_range;9419;2871;;45;D;8500;B741
+Airbus 340-600;long_range;9271;2826;;45;D;14600;A346
+McDonnell Douglas MD-11;long_range;9153;2791;;45;D;12600;MD11
+Boeing 707-320B;long_range;9005;2746;;45;D;9300;B703
+Airbus 350-1000;long_range;8858;2701;;45;D;16100;A35K
+Airbus 350-800;long_range;8858;2701;;45;D;15400;A358
+Airbus 350-900;long_range;8858;2701;;45;D;15000;A359
+Boeing 777-300ER;long_range;8858;2701;;45;D;13600;B77W
+Boeing 777-300;long_range;8858;2701;;45;D;11100;B773
+Airbus 380-800;long_range;8770;2674;;60;F;15200;A388
+Boeing 777-200LR;long_range;8740;2665;;45;D;15800;B77L
+Boeing 767-300ER;long_range;8563;2611;;45;D;11000;B763
+Boeing 767-400;long_range;8563;2611;;45;D;10400;B764
+Boeing 777-200;long_range;8563;2611;;45;D;9700;B772
+Boeing 787-9;long_range;8326;2538;;45;D;14100;B789
+Boeing 787-8;long_range;8326;2538;;45;D;13600;B788
+Airbus 340-300;long_range;8164;2489;;45;D;13700;A343
+Boeing 767-200ER;long_range;7972;2431;;45;D;12200;B762
+Lockheed L-1011-500;long_range;7087;2161;;45;D;9600;L101
+Airbus 330-300;long_range;6791;2070;;45;D;11750;A333
+Airbus 330-200;long_range;6791;2070;;45;D;13450;A332
+Antonov An-225;cargo;10330;3151;;60;F;15400;A225
+Boeing 747 LCF;cargo;10030;3061;;45;D;7800;B744
+Boeing 747-800F;cargo;9743;2971;;60;F;8100;B748
+Boeing 747-400F;cargo;9743;2971;;45;D;8200;B744
+McDonnell Douglas MD-11F;cargo;9153;2791;;45;D;7300;MD11
+Boeing 777F;cargo;8858;2701;;45;D;9200;B77L
+Airbus 380-800F;cargo;8770;2674;;60;F;10400;A388
+Boeing 767-300F;cargo;8563;2611;;45;D;6000;B763
+Airbus 300F;cargo;8415;2566;;45;D;3400;A30B
+Antonov An-124;cargo;8267;2521;;60;F;4500;A124
+Airbus 330-200F;cargo;6791;2070;;45;D;7400;A332
+Airbus 310-200F;cargo;6762;2061;;45;D;5500;A310
+Boeing 757-200F;cargo;5610;1710;;45;D;5800;B752
+ATR 72F;cargo;4606;1404;;30;C;1500;AT72
