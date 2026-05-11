@@ -28,62 +28,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Member | Responsibility | Status |
 |--------|---------------|--------|
-| Colleague A | Python flight performance script (BADA calc, Plotly map) | Done — has bugs, untested |
-| Colleague B | European airport filtering from `airports.csv` + random flight initialisation | In progress |
+| Colleague A | Python flight performance script (BADA calc, Plotly map) | **Retired from integration** — logic ported to MATLAB |
+| Colleague B | European airport filtering + random flight initialisation | **Absorbed into `main_flight_generation.m`** |
 | Colleague C | GUI (target: MATLAB App Designer) | Pending |
-| **User (team leader)** | MATLAB integration (`main.m`), arrival conflict detection (`.m` function), overall integration | In progress |
-
-**Known overlap risk:** Colleague B's airport filtering and random flight initialisation may duplicate logic already in the Python script. Audit Python script before Colleague B writes new code.
+| **User (team leader)** | `main_flight_generation.m`, arrival conflict detection, overall integration | In progress |
 
 ---
 
 ## Architecture
 
 ```
-main.m  (orchestrator)
+main_flight_generation.m  (current working script — will be split or called from main.m)
   │
-  ├─ calls: Python script  →  flight time calculation (BADA-based)
-  ├─ calls: Colleague B's script  →  European airport list + random flight generation
-  ├─ calls: conflict_detection.m  →  arrival conflict detection (to be written)
-  └─ calls: GUI (MATLAB App Designer app)  →  display results
+  ├─ loadAirportDataLocal          →  reads airports.csv + runways.csv
+  ├─ getAircraftDatabaseLocal      →  reads Aircraft_BADA_Mapping.csv (single source of truth)
+  ├─ buildAirportRunwayCatalogLocal→  filters EU large/medium airports; pairs with usable runways
+  ├─ buildDistanceMatrixLocal      →  precomputes 741×741 pairwise NM distance matrix (run once)
+  ├─ generateRandomFlightsLocal    →  generates N flights; assigns aircraft, airports, FL, flight time
+  ├─ computeFlightTimeLocal        →  ISA atmosphere + crossover altitude → TAS → flight time (hrs)
+  ├─ conflict_detection.m          →  arrival conflict detection (TO BE WRITTEN)
+  └─ GUI (MATLAB App Designer)     →  display results (TO BE WRITTEN — Colleague C)
 ```
 
-**Python ↔ MATLAB interface:** Not yet decided. Options are:
-- `system('python ...')` in MATLAB — Python runs as a subprocess, communicates via files (e.g., CSV) or stdout
-- MATLAB Python engine (`py.*`) — calls Python functions directly from MATLAB (requires compatible Python version)
-- File-based handoff — Python writes results to a file; MATLAB reads it
+**Python is no longer part of the integration path.** All BADA-based calculations are now in MATLAB. The Python script is retained as a reference only.
 
-This is a key integration decision to resolve early.
+**Unit standard: NM everywhere** for distances. Flight levels in hundreds of feet (e.g. FL350 = integer 350). Time in hours.
 
 ---
 
 ## Python Script
 
-**File:** `Código team assignment ATM final com simulation.py`  
-**Written by:** Colleague A. The user is not the author and has limited visibility into its internals.
+**File:** `Código team assignment ATM final com simulation.py`
+**Status: RETIRED from integration.** Logic has been ported to MATLAB. Keep as reference only.
 
-**What it does (parsed from source):**
-- Loads aircraft data from `BADA_OR_3.6++(komma_test).xls` (sheets: `36++AIRCRAFT_TYPES`, `36++AIRLINE_PROCEDURES`)
-- Loads airport data from `airports.csv` (84,726 global airports — not filtered to Europe)
-- Calculates great-circle distance via Haversine formula
-- Calculates True Airspeed (TAS) using ISO 2533 atmosphere model with crossover altitude logic (switches between CAS-based and Mach-based speed depending on altitude)
-- Computes flight time, scheduled/actual departure and arrival times, and delay propagation
-- Generates an interactive 3D map via Plotly
-- Exposes a CLI menu: specific flight (Option 1) or random global flight (Option 2)
-
-**Known bugs:**
-- Lines 227–228: `bada_file` incorrectly points to `airports.csv` instead of the BADA `.xls` file. Fix:
-  ```python
-  bada_file = r"<your path>\BADA_OR_3.6++(komma_test).xls"
-  airports_file = r"<your path>\airports.csv"
-  ```
-- Library compatibility issues — script currently cannot run. Debug session pending.
-- Airport pool is global; needs to be filtered to European airports per assignment spec.
-
-**What it does NOT do (gaps vs. assignment spec):**
-- No European airport filter
-- No batch random flight generation (only generates one flight at a time)
-- No arrival conflict detection
+**Why retired:** Python ↔ MATLAB interop (subprocess / `py.*` engine / file handoff) adds latency and failure modes that are unacceptable for thousands-of-flights simulation runs. All required functionality now exists natively in MATLAB.
 
 ---
 
@@ -91,32 +69,77 @@ This is a key integration decision to resolve early.
 
 | File | Contents | Used by |
 |------|----------|---------|
-| `BADA_OR_3.6++(komma_test).xls` | Aircraft performance data — cruise speeds (V_CRU2, M_CRU) per aircraft type | Python script |
-| `airports.csv` | 84,726 global airports with ICAO codes, lat/lon, type, country | Python script; Colleague B will filter this |
-| `runways.csv` | 47,679 runway records | Not currently used |
+| `BADA_OR_3.6++(komma_test).xls` | Original BADA source — **runtime dependency removed**; used only to build the CSV | Reference only |
+| `Aircraft_BADA_Mapping.csv` | **Single source of truth for all aircraft data** — 72 aircraft with BADA-verified performance data | `main_flight_generation.m` |
+| `airports.csv` | 84,726 global airports with ICAO codes, lat/lon, type, country | `main_flight_generation.m` (filtered to EU large/medium at runtime) |
+| `runways.csv` | 47,679 runway records | `main_flight_generation.m` |
+
+### Aircraft_BADA_Mapping.csv — column reference
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `Aircraft Type` | string | Full name (display only) |
+| `Category` | string | `local_aircraft`, `regional`, `medium_range`, `long_range`, `cargo` |
+| `BADA ID` | string | ICAO aircraft type designator — **key for BADA lookup** |
+| `Min Runway Length (ft)` | number | Minimum runway length required |
+| `Min Runway Width (m)` | number | Source width; converted to ft internally |
+| `Min Runway Width (ft)` | number | Used directly if present |
+| `ICAO Code (runway)` | string | Runway category code |
+| `Range (km)` | number | Informational only |
+| `V_CRU2_kts` | number | Cruise CAS (calibrated airspeed) in knots — from `36++AIRLINE_PROCEDURES` |
+| `M_CRU` | number | Cruise Mach number — from `36++AIRLINE_PROCEDURES` |
+| `wake_turb_cat` | string | ICAO wake turbulence category: L/M/H/J — from `36++AIRCRAFT_PATTERNS` |
+| `h_mo_ft` | number | Maximum operating altitude in feet — from `36++AIRCRAFT_PATTERNS`; caps FL draw |
+
+**72 rows — all have direct BADA 3.6++ match. 25 rows were dropped (post-2010 aircraft not in BADA 3.6++): B77W, B788, B789, A35K, A358, A359, A388, B748, BCS1, BCS3, E175, CRJX, DHC6, MRJ7, SU95, A148, T334, B783, A225, B77L (+ cargo variants).**
 
 ---
 
-## Running the Python Script
+## main_flight_generation.m — function reference
 
-```bash
-# Activate the virtual environment (must do this before running Python)
-venv\Scripts\activate
+| Function | Inputs | Outputs | Notes |
+|----------|--------|---------|-------|
+| `loadAirportDataLocal` | filenames | `airportsTable`, `runwaysTable` | Forces numeric types on runway columns |
+| `getAircraftDatabaseLocal` | filename | `aircraftTable` | Reads all 9 performance columns from CSV |
+| `buildAirportRunwayCatalogLocal` | tables | `airportCatalog` (1×741 struct) | EU + large/medium + ICAO + coordinates + ≥1 usable runway |
+| `buildDistanceMatrixLocal` | `airportCatalog` | `distanceMatrix` (741×741 double, NM) | Computed once at startup; upper triangle only, mirrored |
+| `greatCircleNmLocal` | lat1,lon1,lat2,lon2 | `distanceNm` | Haversine; Earth radius 3440.065 NM |
+| `computeFlightTimeLocal` | `distanceNm`, `vCru2Kts`, `mCru`, `flightLevel` | `flightTimeHours` | ISA atmosphere model; crossover altitude logic |
+| `generateRandomFlightsLocal` | catalog, matrix, aircraftTable, N, minNm, maxNm | `flights` table | Up to 250 attempts per flight; errors if exhausted |
+| `findSupportingAirportsLocal` | catalog, aircraftRow | index array | Airports with ≥1 runway supporting the aircraft |
+| `findArrivalCandidatesLocal` | matrix, depIdx, aircraftRow, catalog, minNm, maxNm | index array, distance array | Distance filter from matrix; runway check |
+| `runwaySupportsAircraftLocal` | runwayTable, aircraftRow | boolean mask | length ≥ min AND width ≥ min AND open |
+| `chooseRunwayIdentifierLocal` | runwayRow | string | Picks randomly from le_ident / he_ident |
+| `plotFlightsOnGlobeLocal` | `flights` | — | Tries satelliteScenario → geoglobe → fallback sphere |
 
-# Run
-python "Código team assignment ATM final com simulation.py"
-```
+### flights table — column reference
 
-Dependencies (install if venv is missing):
-```bash
-pip install pandas numpy plotly xlrd openpyxl python-dateutil
-```
+| Column | Type | Notes |
+|--------|------|-------|
+| `flight_id` | string | `F001`, `F002`, … |
+| `aircraft_type` | string | Full name |
+| `aircraft_category` | string | |
+| `bada_id` | string | ICAO designator |
+| `adep` | string | Departure ICAO |
+| `adep_name` | string | |
+| `dep_runway` | string | |
+| `ades` | string | Arrival ICAO |
+| `ades_name` | string | |
+| `arr_runway` | string | |
+| `distance_nm` | double | Great-circle distance |
+| `flight_level` | double | Random integer in [100, floor(h_mo_ft/100)] |
+| `flight_time_hours` | double | From `computeFlightTimeLocal` |
+| `dep_latitude_deg` | double | |
+| `dep_longitude_deg` | double | |
+| `arr_latitude_deg` | double | |
+| `arr_longitude_deg` | double | |
 
 ---
 
-## Pending Decisions
+## Pending
 
-- Python ↔ MATLAB interface method
-- Arrival conflict time window (configurable parameter value)
-- GUI feature scope
-- Which additional features to implement beyond the base spec (expandability)
+- Random departure time assignment (missing from flights table)
+- Arrival time = departure time + flight_time_hours (needed before conflict detection)
+- `conflict_detection.m` — arrival conflict detection; time window is a configurable parameter
+- GUI feature scope (Colleague C)
+- Which additional features beyond base spec (expandability criterion)
